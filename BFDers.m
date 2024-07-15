@@ -6,7 +6,7 @@ function Ders = BFDers(i,u,p,U,ord)
 % 
 % Calling Sequence: 
 %  
-%   N = basisfun(i,u,p,U) 
+%   N = basisfun(i,u,p,U,ord) 
 %    
 %    INPUT: 
 %    
@@ -14,40 +14,39 @@ function Ders = BFDers(i,u,p,U,ord)
 %      u - parametric point 
 %      p - spline degree 
 %      U - knot sequence 
+%      ord - derivative order
 %    
 %    OUTPUT: 
 %    
-%      N - Basis functions vector[p+1] 
+%      N - Basis functions and its 0th to ordth derivative (p+1)*ord matrix
 %    
 %    Algorithm A2.2 from 'The NURBS BOOK' pg70. 
-                                                 
-                                                  %   void basisfun(int i, double u, int p, double *U, double *N) { 
-                                                  %   int j,r; 
-                                                  %   double saved, temp; 
+                                                                                                                                                   
+                                                   
 i = i + 1; 
-                                                  %   // work space 
-left = zeros(p+1,1,'like',u);                              %   double *left  = (double*) mxMalloc((p+1)*sizeof(double)); 
-right = zeros(p+1,1,'like',u);                             %   double *right = (double*) mxMalloc((p+1)*sizeof(double)); 
+                                                  
+left = zeros(p+1,1,'like',u);                              
+right = zeros(p+1,1,'like',u);                              
 
 N = zeros(p+1,'like',u);
-N(1,1) = 1;                                         %   N[0] = 1.0; 
-for j=1:p                                         %   for (j = 1; j <= p; j++) { 
+N(1,1) = 1;                                        
+for j=1:p                                          
     jc = j+1;
-    left(jc) = u - U(i+1-j);                     %   left[j]  = u - U[i+1-j]; 
-    right(jc) = U(i+j) - u;                      %   right[j] = U[i+j] - u; 
-    saved = 0;                                    %   saved = 0.0; 
+    left(jc) = u - U(i+1-j);                     
+    right(jc) = U(i+j) - u;                      
+    saved = 0;                                    
  
-    for r=0:j-1                                   %   for (r = 0; r < j; r++) { 
+    for r=0:j-1                                   
         rc = r+1;
         temp = right(rc+1) + left(jc-r);
         N(jc,rc) = temp;
-        temp = N(rc,jc-1)/temp; %   temp = N[r] / (right[r+1] + left[j-r]); 
-        N(rc,jc) = saved + right(rc+1)*temp;         %   N[r] = saved + right[r+1] * temp; 
-        saved = left(jc-r)*temp;                 %   saved = left[j-r] * temp; 
-    end                                           %   } 
+        temp = N(rc,jc-1)/temp;
+        N(rc,jc) = saved + right(rc+1)*temp;        
+        saved = left(jc-r)*temp;                  
+    end                                           
  
-    N(jc,jc) = saved;                               %   N[j] = saved; 
-end                                               %   } 
+    N(jc,jc) = saved;                            
+end                                             
    
 Ders = zeros(ord+1,p+1,'like',u);
 Ders(1,:) = N(:,end)';

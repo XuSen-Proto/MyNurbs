@@ -53,11 +53,13 @@ function nurbs = BspGcMak(coefs,knots)
 nurbs.form   = 'BspGc'; 
 np = size(coefs); 
 dim = np(1);
-nurbs.dim = int16(dim);  
+% nurbs.dim = int16(dim);  
+nurbs.dim = dim; 
  
 % constructing a curve 
 nurbs.coefs = coefs; 
-nurbs.order = int16(size(knots,2)-np(2)); 
+% nurbs.order = int16(size(knots,2)-np(2)); 
+nurbs.order = size(knots,2)-np(2); 
 nurbs.knots = knots;
 % knots = sort(knots); 
 % nurbs.knots = (knots-knots(1))/(knots(end)-knots(1)); 
